@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background-start-hex:   #B4ACF9;
+  --text-color-middle:rgba(255, 255, 255, 0.8);
+  --background-end-hex:  #2E2938;
+  
+}
+
+
+body {
+  color: var(--text-color-middle);
+  background: var(--background-end-hex)
+}
+
+/* @media (max-width: 1024px) {
+ main{
+    
+ }
+} */
+/* @layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+} */
