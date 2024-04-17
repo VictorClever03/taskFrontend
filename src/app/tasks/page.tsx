@@ -1,27 +1,49 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-'use client'
+"use client";
+
+
 import { NavBar } from "@/components/NavBar";
-import { FormEvent } from 'react'
+import { FormEvent } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { api } from "@/lib/api";
 import { Search, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 interface Task {
   id: string;
+  done: number;
   title: string;
   created_at: string;
 }
 export default async function tasks() {
-  const router =  useRouter();
-  const  response = await api.get("api/task");
+  // todas as tarefas
+  const response = await api.get("api/task");
   const tasks: Task[] = response.data;
- 
-  async function handleDelete(id:String){
-    await api.delete(`api/task/${id}`);
 
-    window.location.reload()
+  // deletar a tarefa
+  async function handleDelete(id: String) {
+    await api
+      .delete(`api/task/${id}`)
+      .then((response) => {
+        // Se a requisição for bem-sucedida
+        console.log("Sucesso", response.data);
+      })
+      .catch((error) => {
+        console.error("Erro:", error);
+      });
+
+    window.location.reload();
   }
- 
+  async function completeTask(id: String, done:number) {
+    await api
+      .put(`api/task/update/${id}`,{"done":done})
+      .then((response) => {
+        // Se a requisição for bem-sucedida
+        console.log("Sucesso", response.data);
+      })
+      .catch((error) => {
+        console.error("Erro:", error);
+      });
+  }
 
   return (
     <main>
@@ -60,36 +82,72 @@ export default async function tasks() {
             </h3>
             <div className="flex flex-col justify-start items-center gap-3">
               {(await tasks).map((task) => {
-                return (
-                  <div
-                    key={task.id}
-                    className="flex justify-between items-center px-[18px] w-[1004px] h-[60px] rounded-[12px] bg-[#363041] cursor-pointer hover:filter hover:brightness-110"
-                  >
-                    <span className=" flex gap-[13px] items-center justify-start  ">
-                      {/* <form action="" method="post"> */}
-                        <a >
-                          <Checkbox className="border-firstHex w-[28px] h-[28px] border-2 rounded-[6px] data-[state=checked]:bg-firstHex " />
-                        </a>
-                      {/* </form> */}
+                if (task.done === 0) {
+                  return (
+                    <div
+                      key={task.id}
+                      className="flex justify-between items-center px-[18px] w-[1004px] h-[60px] rounded-[12px] bg-[#363041] cursor-pointer hover:filter hover:brightness-110"
+                    >
+                      <span className=" flex gap-[13px] items-center justify-start  ">
+                        {/* <form action="" method="post"> */}
 
-                      <span>
-                        <p className="font-[500] text-[18px] leading-[20.63px] mb-[8px] ">
-                          {task.title}
-                        </p>
-                        <p className="text-firstHex font-bold text-[12px] leading-[13.75px]">
-                          Today
-                        </p>
+                        <button onClick={() => completeTask(task.id, 1)}>
+                          <Checkbox className="border-firstHex w-[28px] h-[28px] border-2 rounded-[6px] data-[state=checked]:bg-firstHex " />
+                        </button>
+                        {/* </form> */}
+
+                        <span>
+                          <p className="font-[500] text-[18px] leading-[20.63px] mb-[8px] ">
+                            {task.title}
+                          </p>
+                          <p className="text-firstHex font-bold text-[12px] leading-[13.75px]">
+                            Today
+                          </p>
+                        </span>
                       </span>
-                    </span>
-                    {/* <form  method="post" onSubmit={}> */}
-                      <button
-                      onClick={() => handleDelete(task.id)}
-                      >
+                      {/* <form  method="post" onSubmit={}> */}
+                      <button onClick={() => handleDelete(task.id)}>
                         <Trash />
                       </button>
-                    {/* </form> */}
-                  </div>
-                );
+                      {/* </form> */}
+                    </div>
+                  );
+                }else{
+                  return (
+                  
+                    <div
+                      key={task.id}
+                      className="flex justify-between items-center px-[18px] w-[1004px] h-[60px] rounded-[12px] bg-[#363041] cursor-pointer hover:filter hover:brightness-110"
+                    >
+                      <span className=" flex gap-[13px] items-center justify-start  ">
+                        {/* <form action="" method="post"> */}
+                        
+                          <button
+                          onClick= { ()=>completeTask(task.id, 0)}
+                          >
+                            <Checkbox checked className="border-firstHex w-[28px] h-[28px] border-2 rounded-[6px] data-[state=checked]:bg-firstHex " />
+                          </button>
+                        {/* </form> */}
+  
+                        <span>
+                          <p className="font-[500] text-[18px] leading-[20.63px] mb-[8px] line-through">
+                            {task.title}
+                          </p>
+                          <p className="text-firstHex font-bold text-[12px] leading-[13.75px]">
+                            Today
+                          </p>
+                        </span>
+                      </span>
+                      {/* <form  method="post" onSubmit={}> */}
+                        <button
+                        onClick={() => handleDelete(task.id)}
+                        >
+                          <Trash />
+                        </button>
+                      {/* </form> */}
+                    </div>
+                  );
+                }
               })}
             </div>
           </div>

@@ -30,8 +30,8 @@ import {
   PopoverTrigger,
 } 
 from "@/components/ui/popover";
+
 import {useRouter} from "next/navigation";
-import router from "next/router";
 import { title } from "process";
 // import { toast } from "@/components/ui/use-toast"
 
@@ -45,7 +45,6 @@ const formSchema = z.object({
 });
 
 export default function TasksNew() {
-  const router = useRouter();
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -54,6 +53,7 @@ export default function TasksNew() {
     },
   });
 
+  const router = useRouter();
  
   async function handleCreateTask(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -78,6 +78,7 @@ export default function TasksNew() {
       <div className="flex justify-center items-center  h-screen w-screen">
         <div className="flex flex-col justify-center items-start ">
           <span className="flex justify-center items-center gap-[18px] mb-[48px]">
+            
             <ArrowLeftComponent />
             <span>
               <h1 className="font-bold text-[32px] leading-[36.67px] mb-[12px]">

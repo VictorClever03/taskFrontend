@@ -1,10 +1,37 @@
+'use client'
 import Link from "next/link";
 import { SocialAuth } from "./SocialAuth";
 import googleSvg from "../assets/googleSvg.svg";
 import Image from "next/image";
 import { Button } from "../components/ui/button";
+import React, { FormEvent, useState } from 'react';
+import api from "@/lib/api";
+import { useRouter } from "next/navigation";
+
+
+
 export function SignIn() {
+  const router= useRouter();
+  const [token, setToken] = useState(localStorage.getItem('token') || '');
+
+  const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+   
+    try {
+      const response = await api.post('/api/login', { email: formData.get('email'), password: formData.get('password') });
+      const  token  = response.data;
+      setToken(token);
+      localStorage.setItem('token', token);
+      console.log('Login executado:',token);
+      router.push('/tasks')
+    } catch (error) {
+      console.error('Erro ao fazer login:', error);
+    }
+  };
+
   return (
+
     <div className="flex flex-col justify-center items-start gap-10 w-[381px]">
       <h1 className="text-[32px]">
         <span className="text-firstHex font-bold">Task</span>Manager
@@ -75,7 +102,7 @@ export function SignIn() {
         </Link>
       </ul>
       <div className="flex flex-col justify-start items-center  w-[381px]">
-        <form action="" className="flex flex-col justify-start items-center  w-[381px] gap-5">
+        <form onSubmit={handleLogin} className="flex flex-col justify-start items-center  w-[381px] gap-5">
           <label
             htmlFor="email"
             className="font-[500] text-[16px] leading-[18.34px] text-firstHex flex flex-col gap-[8px]"
@@ -96,7 +123,7 @@ export function SignIn() {
             Password
             <input
               type="password"
-              name="pass"
+              name="password"
               id="password"
               className="w-[381px] h-[60px] rounded-[6px] bg-[#363041] font-[500] text-[12px] leading-[13.75px] px-[23px] outline-none text-textColor mb-[20px]"
               placeholder="Please insert your password"
@@ -113,5 +140,6 @@ export function SignIn() {
         <Link href="/auth/signup">Não tens uma conta? Criar conta agora.</Link>
       </div>
     </div>
+
   );
 }

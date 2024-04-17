@@ -1,8 +1,11 @@
 import Link from "next/link";
+
 import Image from "next/image";
 import profileImage from "../../public/pexels-caio-cardenas-2101839 1.png"
 import { ArrowRight,CopyPlus,Menu } from "lucide-react";
+
 export function NavBar(){
+    
     return(
         <header className="flex justify-between items-center bg-[#363041] h-[76px] w-screen pl-[24px] pr-[64px] fixed">
                 <nav className="flex gap-[18px]">
